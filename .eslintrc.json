@@ -1,0 +1,9 @@
+{
+  "extends": [
+    "@liou666"
+  ],
+  "rules": {
+    "react/no-unknown-property": "off", // 适配windicss 属性模式
+    "react/jsx-max-props-per-line": ["error", { "maximum": 3 }]
+  }
+}

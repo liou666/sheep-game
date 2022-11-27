@@ -1,0 +1,47 @@
+:root {
+  --c-bg: #f1f1f1;
+  --c-scrollbar: #eee;
+  --c-scrollbar-hover: #bbb;
+  transition: all .25s;
+}
+
+html {
+  background-color: var(--c-bg);
+}
+
+html.dark {
+  --c-bg: #121212;
+  --c-scrollbar: #111;
+  --c-scrollbar-hover: #222;
+}
+
+html {
+  overflow: scroll;
+}
+
+
+/* scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar:horizontal {
+  height: 6px;
+}
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+  background: var(--c-bg);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-scrollbar);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-scrollbar-hover);
+}
+
+/* base common */
+a{
+  color: inherit;
+  text-decoration: inherit;
+}
+

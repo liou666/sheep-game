@@ -1,0 +1,54 @@
+{
+  "name": "react-template",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "React Start Template",
+  "author": "Liou (https://github.com/liou666)",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "vite",
+    "windicss",
+    "iconify"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.6",
+    "pnpm": ">=7.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "dependencies": {
+    "ahooks": "^3.7.2",
+    "classnames": "^2.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.4.3"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.1.9",
+    "@iconify-json/ic": "^1.1.9",
+    "@liou666/eslint-config": "^1.4.1",
+    "@testing-library/react": "^13.4.0",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.22",
+    "@types/react-dom": "^18.0.7",
+    "@vitejs/plugin-react": "^2.1.0",
+    "eslint": "^8.26.0",
+    "jsdom": "^20.0.0",
+    "typescript": "^4.6.4",
+    "unocss": "^0.46.5",
+    "unplugin-auto-import": "^0.11.4",
+    "vite": "^3.2.0",
+    "vite-plugin-pages": "^0.27.1",
+    "vitest": "^0.25.1"
+  }
+}
