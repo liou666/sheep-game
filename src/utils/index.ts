@@ -21,3 +21,8 @@ export function uuid(len: number, radix = 16) {
 
   return uuid.join('')
 }
+
+export const sleep = (time: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, time)
+  })

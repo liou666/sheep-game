@@ -1,5 +1,5 @@
 import cs from 'classnames'
-import { uuid } from '@/utils'
+import { sleep, uuid } from '@/utils'
 
 enum CardStatus{
   selected = 0,
@@ -10,12 +10,8 @@ interface Card{
   icon: string
   x: number
   y: number
-  // 控制遮罩层
   isOcclusion: boolean
-  // 是否在卡槽中 0否 1是
   status: CardStatus
-  // 是否清除
-  clear: boolean
   // 隐藏
   display: boolean
 }
@@ -26,18 +22,19 @@ const IndexPage = () => {
   const cardSize = 40
   const row = 7
   const col = 7
-  const defaultIcons = ['⚙️', '🦄', '😅', '📕', '🎁', '📺']
-  const defaultRounds = ['3', '6', '9', '2', '8']
+  const defaultIcons = ['🦄', '😅', '📕', '🎁', '📺']
+  const defaultRounds = ['3', '6', '9', '8']
   const defaultOffsetValue = [7, -7, 20, -20, 25, -25, 33, -33, 40, -40]
   const defaultOffsetValueLength = defaultOffsetValue.length
-  const icons = defaultIcons.slice(0, 2)
+  const icons = defaultIcons.slice(0)
   const maxCardsNo = 7
+  const maxCardsClear = 3
   const slotPadding = 20
-
+  const animationDuration = 300
   const [cards, setCards] = useState<Card[]>([])
   const [, forceRerender] = useReducer(x => x + 1, 0)
 
-  // let selectedNo = useRef(0).current
+  const selectedCards = useRef<Map<string, Card[]>>(new Map()).current
   const cardEl = useRef<HTMLDivElement | null>(null)
   const slotEl = useRef<HTMLDivElement | null>(null)
 
@@ -54,24 +51,59 @@ const IndexPage = () => {
       y,
       isOcclusion: false,
       status: 0,
-      clear: false,
       display: false,
     }
   }
-  const refreshSlot = (card: Card) => {
-    const a = cardEl.current
-    const b = slotEl.current
-    const { x: x1, y: y1 } = b!.getClientRects()[0]
-    const { y: y2, top } = a!.getClientRects()[0]
-    console.log('y1,y2', y1, y2, top)
-    const newY = y1 - y2 + slotPadding
-    const newX = x1 + selectedNo * cardSize
-    console.log(newX, newY)
-    card.status = 1
-    card.x = newX
-    card.y = newY
+  const handleSlotQueue = async (c: Card[]) => {
+    if (c.length === maxCardsClear) {
+      await sleep(animationDuration)
+      selectedCards.delete(c[0].icon)
+      c.forEach(x => x.display = true)
+      selectedNo -= maxCardsClear
+      forceRerender()
+      refreshSlot()
+    }
+  }
+  function reset() {
+    selectedNo = 0
+    selectedCards.clear()
+    setCards([])
+    init()
+  }
+  function refreshSlot(item?: Card) {
+    const { x: x1, y: y1 } = slotEl.current!.getClientRects()[0]
+    const { x: x2, y: y2 } = cardEl.current!.getClientRects()[0]
 
-    selectedNo++
+    if (item) {
+      const c = selectedCards.get(item.icon)
+      if (c) {
+        c.push(item)
+        handleSlotQueue(c)
+      }
+      else {
+        selectedCards.set(item.icon, [item])
+      }
+    }
+    let index = 0
+    selectedCards.forEach((v) => {
+      v.forEach((c) => {
+        const newY = y1 - y2 - cardSize + slotPadding / 2
+        const newX = x1 - x2 + index * cardSize - cardSize + slotPadding / 2
+        c.x = newX
+        c.y = newY
+        index++
+        c.status = 1
+      })
+    })
+
+    // Game Over
+    setTimeout(() => {
+      if (selectedNo === maxCardsNo) {
+        alert('Game Over')
+
+        reset()
+      }
+    }, animationDuration)
   }
 
   const checkShading = () => {
@@ -97,12 +129,14 @@ const IndexPage = () => {
 
   const clickCards = (card: Card) => {
     if (card.status === 1 || card.isOcclusion) return
-    if (selectedNo < maxCardsNo)
+    if (selectedNo < maxCardsNo) {
+      selectedNo++
       refreshSlot(card)
+    }
     checkShading()
   }
 
-  const init = () => {
+  function init() {
     for (const icon of icons) {
       const round = +defaultRounds[Math.floor(Math.random() * defaultRounds.length)]
       for (let i = 0; i < round; i++)
@@ -120,23 +154,26 @@ const IndexPage = () => {
     <div>
       <div
         ref={cardEl}
-        m='a' border='1'
+        m='a' border='1 coolGray'
         box='content'
-        relative=''
+        relative
         style={{ width: `${cardSize * row}px`, height: `${cardSize * col}px`, padding: `${cardSize}px` }}
       >
         {cards.map((card, i) => {
           return (
             <div
               box='border'
-              border='1 black'
+              border='1 dark:black/50'
               transition='all'
               duration='300'
+              rounded=''
               style={{
                 width: `${cardSize}px`,
                 height: `${cardSize}px`,
                 transform: `translate(${card.x}px, ${card.y}px)`,
-                background: '',
+                display: `${card.display ? 'none' : ''}`,
+                userSelect: 'none',
+                transitionDuration: `${animationDuration}ms`,
               }}
               onClick={() => {
                 clickCards(card)
@@ -155,15 +192,13 @@ const IndexPage = () => {
       <footer
         ref={slotEl}
         style={{
-          width: `${maxCardsNo * cardSize}px`,
-          padding: `${slotPadding}px`,
+          width: `${maxCardsNo * cardSize + slotPadding}px`,
+          height: `${cardSize + slotPadding}px`,
         }}
         text='left'
         m='t-10 x-a'
-        border='~ rounded'
-      >
-        2
-      </footer>
+        border='~ rounded coolGray'
+      />
     </div>
   )
 }
