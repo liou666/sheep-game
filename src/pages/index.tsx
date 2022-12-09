@@ -13,7 +13,7 @@ interface Card{
   isOcclusion: boolean
   status: CardStatus
   // 隐藏
-  display: boolean
+  hide: boolean
 }
 
 let selectedNo = 0
@@ -23,7 +23,7 @@ const IndexPage = () => {
   const row = 7
   const col = 7
   const defaultIcons = ['🦄', '😅', '📕', '🎁', '📺']
-  const defaultRounds = ['3', '6', '9', '8']
+  const defaultRounds = ['3', '6', '9', '12']
   const defaultOffsetValue = [7, -7, 20, -20, 25, -25, 33, -33, 40, -40]
   const defaultOffsetValueLength = defaultOffsetValue.length
   const icons = defaultIcons.slice(0)
@@ -51,14 +51,14 @@ const IndexPage = () => {
       y,
       isOcclusion: false,
       status: 0,
-      display: false,
+      hide: false,
     }
   }
   const handleSlotQueue = async (c: Card[]) => {
     if (c.length === maxCardsClear) {
       await sleep(animationDuration)
       selectedCards.delete(c[0].icon)
-      c.forEach(x => x.display = true)
+      c.forEach(x => x.hide = true)
       selectedNo -= maxCardsClear
       forceRerender()
       refreshSlot()
@@ -110,13 +110,13 @@ const IndexPage = () => {
     for (let i = 0; i < cards.length; i++) {
       const cur = cards[i]
       cur.isOcclusion = false
-      if (cur.status !== 0 || cur.display) continue
+      if (cur.status !== 0 || cur.hide) continue
       const { x: x1, y: y1 } = cur
       const x2 = x1 + cardSize
       const y2 = y1 + cardSize
       for (let j = i + 1; j < cards.length; j++) {
         const compare = cards[j]
-        if (compare.status !== 0 || compare.display) continue
+        if (compare.status !== 0 || compare.hide) continue
         const { x, y } = compare
         if (!(y + cardSize <= y1 || y >= y2 || x + cardSize <= x1 || x >= x2)) {
           cur.isOcclusion = true
