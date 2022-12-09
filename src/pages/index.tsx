@@ -171,7 +171,7 @@ const IndexPage = () => {
                 width: `${cardSize}px`,
                 height: `${cardSize}px`,
                 transform: `translate(${card.x}px, ${card.y}px)`,
-                display: `${card.display ? 'none' : ''}`,
+                display: `${card.hide ? 'none' : ''}`,
                 userSelect: 'none',
                 transitionDuration: `${animationDuration}ms`,
               }}
